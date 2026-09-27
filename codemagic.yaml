@@ -3,8 +3,6 @@ workflows:
     name: React Native Android Build
     max_build_duration: 60
     instance_type: mac_mini_m1
-    environment:
-      node: 20.x
     scripts:
       - name: Install dependencies
         script: |
