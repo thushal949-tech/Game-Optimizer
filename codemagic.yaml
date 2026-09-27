@@ -8,6 +8,7 @@ workflows:
         - supabase_keys
       vars:
         NODE_VERSION: 20.x
+        NODE_ENV: production
     triggering:
       events:
         - push
@@ -23,7 +24,7 @@ workflows:
           echo "EXPO_PUBLIC_SUPABASE_ANON_KEY=$EXPO_PUBLIC_SUPABASE_ANON_KEY" >> .env
       - name: Run Expo Prebuild with Inline Assets
         script: |
-          # 100% working trick: Create folders and copy the icon right inside the same script step!
+          # Create assets directory dynamically
           mkdir -p assets/images
           if [ -f "icon.jpg" ]; then
             cp icon.jpg assets/images/icon.png
@@ -33,11 +34,15 @@ workflows:
             cp icon.png assets/images/adaptive-icon.png
           fi
           
-          # Now run prebuild immediately in the same session
+          # Run prebuild immediately in this session
           npx expo prebuild --platform android
       - name: Build Android APK for Low-End Devices
         script: |
           cd android
+          # Force gradle properties to enable New Architecture as required by Reanimated v4
+          echo "newArchEnabled=true" >> gradle.properties
+          
+          # Run build with heavy R8 compression and Hermes engine optimization
           ./gradlew assembleRelease -PminifyWithR8=true -PjavascriptEngine=hermes
     artifacts:
       - android/app/build/outputs/apk/release/*.apk
