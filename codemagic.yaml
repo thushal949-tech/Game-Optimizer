@@ -21,6 +21,12 @@ workflows:
         script: |
           echo "EXPO_PUBLIC_SUPABASE_URL=$EXPO_PUBLIC_SUPABASE_URL" >> .env
           echo "EXPO_PUBLIC_SUPABASE_ANON_KEY=$EXPO_PUBLIC_SUPABASE_ANON_KEY" >> .env
+      - name: Fix Icon Assets Folder Path
+        script: |
+          # Create the folders and copy icon.jpg as icon.png to bypass expo prebuild check
+          mkdir -p assets/images
+          cp icon.jpg assets/images/icon.png
+          cp icon.jpg assets/images/adaptive-icon.png
       - name: Run Expo Prebuild
         script: |
           npx expo prebuild --platform android
