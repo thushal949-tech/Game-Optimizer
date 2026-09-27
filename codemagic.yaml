@@ -4,17 +4,14 @@ workflows:
     max_build_duration: 60
     instance_type: mac_mini_m1
     environment:
-      node: latest
+      node: 20.x
     scripts:
-      - name: Fetch and Setup Android Template
-        script: |
-          git clone https://github.com temp-android
-          cp -r temp-android/android ./android
-          cp -r temp-android/app.json ./app.json
-          rm -rf temp-android
       - name: Install dependencies
         script: |
           npm install
+      - name: Generate Android Native Project
+        script: |
+          npx expo prebuild --platform android --no-install
       - name: Build Android Release APK
         script: |
           cd android && ./gradlew assembleRelease
