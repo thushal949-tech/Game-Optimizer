@@ -4,6 +4,7 @@
     "slug": "optimizeroom",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./icon.jpg",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": false,
