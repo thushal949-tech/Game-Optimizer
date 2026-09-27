@@ -21,12 +21,22 @@ workflows:
         script: |
           echo "EXPO_PUBLIC_SUPABASE_URL=$EXPO_PUBLIC_SUPABASE_URL" >> .env
           echo "EXPO_PUBLIC_SUPABASE_ANON_KEY=$EXPO_PUBLIC_SUPABASE_ANON_KEY" >> .env
-      - name: Fix Icon Assets Folder Path
+      - name: Create Required Expo Folders and Icons
         script: |
-          # Create the folders and copy icon.jpg as icon.png to bypass expo prebuild check
+          # Create assets folder inside the cloud builder machine
           mkdir -p assets/images
-          cp icon.jpg assets/images/icon.png
-          cp icon.jpg assets/images/adaptive-icon.png
+          
+          # Check if icon.jpg exists at root and copy it to the exact path expo wants
+          if [ -f "icon.jpg" ]; then
+            cp icon.jpg assets/images/icon.png
+            cp icon.jpg assets/images/adaptive-icon.png
+          elif [ -f "icon.png" ]; then
+            cp icon.png assets/images/icon.png
+            cp icon.png assets/images/adaptive-icon.png
+          else
+            # Fallback text image if no logo is found to prevent crashing
+            echo "No root image found"
+          fi
       - name: Run Expo Prebuild
         script: |
           npx expo prebuild --platform android
